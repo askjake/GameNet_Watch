@@ -1,12 +1,16 @@
-# GameNet Watch — Auto-Discover Edition
+# GameNet Watch — v1.4 Auto‑Discover + Stickiness + Throughput Hints + CSV Logs
 
-This build adds **Auto-Discover** to the original GameNet Watch:
-- Samples your OS connection table (via `psutil`) every ~2s.
-- Ranks remote endpoints by **persistence** and **fan‑out** (how many simultaneous sockets).
-- (Optional) **Port filtering** (e.g., `3074, 27015-27050, 3478-3480`) to focus on game traffic.
-- Automatically **adds the top N endpoints** to the ping monitors (augment or replace your manual list).
-
-No admin rights and no packet capture needed.
+**What's new (and fixes):**
+- **Buttons not working under autorefresh** → fixed. One‑off tests (DNS, Speedtest, Traceroute) are now stateful and temporarily **pause autorefresh** so results render reliably.
+- **Auto‑Discover stickiness**: game servers you hit are kept in the monitor set for **X minutes** even if they temporarily drop out.
+- **Throughput hints**:
+  - Cross‑platform interface rates via psutil deltas.
+  - Linux: parses `ss -tin` for median **RTT**/**cwnd**, rough BDP/throughput.
+  - macOS: tries `nettop -P -L 1 -x` for observed bytes in/out.
+  - Windows: supplements with `netstat -e` totals.
+- **CSV logging**:
+  - `metrics_*.csv`: timestamped per‑target latency/jitter/loss metrics.
+  - `discover_*.csv`: snapshots of auto‑discovered endpoints.
 
 ## Quick start
 ```
@@ -16,7 +20,9 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Notes
-- Discovery is heuristic — game servers/CDNs often use rotating IPs. Increase **Minimum snapshots** to reduce flapping.
-- UDP flows may show as connected with `status=NONE`; we include them when they have a remote endpoint.
-- Reverse DNS and process names are best-effort and cached briefly.
+## Tips
+- Use **Stickiness (minutes)** to keep a server in view during a whole match.
+- Keep **ping interval ≥ 500 ms** while gaming to avoid unnecessary load.
+- Use **port filter** to focus auto‑discover on game ports (e.g., 3074, 27015‑27050, 3478‑3480).
+
+Logs default to a `logs/` folder under your working directory. Change it in the sidebar.
