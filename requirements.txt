@@ -1,0 +1,8 @@
+streamlit==1.38.0
+pandas>=2.0
+numpy>=1.24
+dnspython>=2.4.0
+speedtest-cli>=2.1.3
+netifaces>=0.11.0
+psutil>=5.9.0
+streamlit-autorefresh>=1.0.1
